@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class SectionTitle extends StatelessWidget {
   final String title;
 
+  // Constructor to receive the title of the section {required}
   const SectionTitle({super.key, required this.title});
 
   @override

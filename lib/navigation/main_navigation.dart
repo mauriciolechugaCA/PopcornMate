@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:popcornmate_app/home_screen.dart';
+import 'package:popcornmate_app/search_screen.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -15,7 +16,7 @@ class _MainNavigationState extends State<MainNavigation> {
   // Creates a list of widgets to be displayed in the navigation
   static const List<Widget> _pages = [
     MyHomePage(title: 'Home'),
-    Text('Search'),
+    SearchPage(title: 'Search'),
   ];
 
   void _onItemTapped(int index) {
