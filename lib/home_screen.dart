@@ -23,8 +23,8 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(
           widget.title,
           style: const TextStyle(
-            color: AppColors.text,
-            fontSize: 24,
+            color: AppColors.accent,
+            fontSize: 30,
             fontWeight: FontWeight.bold,
           ),
         ),

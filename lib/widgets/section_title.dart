@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:popcornmate_app/theme/colors.dart';
 
 // This class is used to create sections titles
 class SectionTitle extends StatelessWidget {
@@ -18,7 +19,7 @@ class SectionTitle extends StatelessWidget {
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.deepPurple,
+              color: AppColors.accent,
             ),
           ),
         ));

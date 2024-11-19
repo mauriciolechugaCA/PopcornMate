@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:popcornmate_app/theme/colors.dart';
 
 // This class is used to create a carousel
 class Carousel extends StatelessWidget {
@@ -13,12 +14,30 @@ class Carousel extends StatelessWidget {
         return Container(
           width: 150,
           margin: const EdgeInsets.symmetric(horizontal: 10),
-          color: Colors.deepPurpleAccent,
-          child: Center(
-            child: Text(
-              'Movie ${index + 1}',
-              style: const TextStyle(color: Colors.white, fontSize: 20),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: AppColors.accent,
+              width: 2,
             ),
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.transparent, // This is the background color
+          ),
+          child: Column(
+            mainAxisAlignment:
+                MainAxisAlignment.end, // Aligns content to bottom
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  'Movie ${index + 1}',
+                  style: const TextStyle(
+                    color: AppColors.highlight,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },
