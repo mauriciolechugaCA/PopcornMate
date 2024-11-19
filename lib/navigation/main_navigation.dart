@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:popcornmate_app/home_screen.dart';
-import 'package:popcornmate_app/search_screen.dart';
+import 'package:popcornmate_app/screens/home_screen.dart';
+import 'package:popcornmate_app/screens/search_screen.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 
 class MainNavigation extends StatefulWidget {
