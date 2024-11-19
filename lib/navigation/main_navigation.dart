@@ -16,6 +16,9 @@ class _MainNavigationState extends State<MainNavigation> {
   // Creates a list of widgets to be displayed in the navigation
   static const List<Widget> _pages = [
     MyHomePage(title: 'Home'),
+    SearchPage(title: 'Movies'), // MoviesScreen(title: 'Movies'),  // TODO: Implement MoviesScreen
+    SearchPage(title: 'TV Shows'),// TVshowsScreen(title: 'TV Shows'), // TODO: Implement TVshowsScreen
+    SearchPage(title: 'Favorites'),// FavoritesScreen(title: 'Favorites'), // TODO: Implement FavoritesScreen
     SearchPage(title: 'Search'),
   ];
 
@@ -33,6 +36,9 @@ class _MainNavigationState extends State<MainNavigation> {
         type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.movie), label: 'Movies'), 
+          BottomNavigationBarItem(icon: Icon(Icons.tv), label: 'TV Shows'), 
+          BottomNavigationBarItem(icon: Icon(Icons.thumb_up), label: 'Favorites'), 
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
         ],
         currentIndex: _selectedIndex,
