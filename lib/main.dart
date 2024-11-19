@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: AppColors.primary,
-        // scaffoldBackgroundColor: AppColors.secondary,
+        scaffoldBackgroundColor: AppColors.secondary,
         colorScheme: Theme.of(context).colorScheme.copyWith(
           primary: AppColors.accent,
           secondary: AppColors.highlight,

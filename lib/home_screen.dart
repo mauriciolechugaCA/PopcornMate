@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:popcornmate_app/widgets/carousel.dart';
 import 'package:popcornmate_app/widgets/section_title.dart';
+import 'package:popcornmate_app/theme/colors.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -16,8 +17,17 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.text,
+        elevation: 0,
+        title: Text(
+          widget.title,
+          style: const TextStyle(
+            color: AppColors.text,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
       ),
       body: const Center(
