@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:popcornmate_app/home_screen.dart';
 import 'package:popcornmate_app/search_screen.dart';
+import 'package:popcornmate_app/theme/colors.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -34,6 +35,9 @@ class _MainNavigationState extends State<MainNavigation> {
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
+        backgroundColor: AppColors.primary,
+        selectedItemColor: AppColors.accent,
+        unselectedItemColor: AppColors.text,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.movie), label: 'Movies'), 
