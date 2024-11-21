@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:popcornmate_app/widgets/carousel.dart';
+import 'package:popcornmate_app/widgets/carousel_large.dart';
 import 'package:popcornmate_app/widgets/section_title.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 
@@ -32,14 +33,12 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: const Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            SectionTitle(title: 'Featured Movies'),
-            SizedBox(height: 200, child: Carousel()),
-            SectionTitle(title: 'Upcoming Releases'),
-            SizedBox(height: 200, child: Carousel()),
-            SectionTitle(title: 'Top-rated Movies'),
-            SizedBox(height: 200, child: Carousel()),
+            SectionTitle(title: 'Trending Movies'),
+            SizedBox(height: 300, child: CarouselLarge()),
+            SectionTitle(title: 'Trending TV Shows'),
+            SizedBox(height: 300, child: CarouselLarge()),
           ],
         ),
       ),
