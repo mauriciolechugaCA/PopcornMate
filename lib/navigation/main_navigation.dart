@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:popcornmate_app/screens/home_screen.dart';
 import 'package:popcornmate_app/screens/search_screen.dart';
 import 'package:popcornmate_app/theme/colors.dart';
+import 'package:popcornmate_app/screens/movies_screen.dart';
+
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -17,7 +19,7 @@ class _MainNavigationState extends State<MainNavigation> {
   // Creates a list of widgets to be displayed in the navigation
   static const List<Widget> _pages = [
     MyHomePage(title: 'Home'),
-    SearchPage(title: 'Movies'), // MoviesScreen(title: 'Movies'),  // TODO: Implement MoviesScreen
+    MoviesScreen(), 
     SearchPage(title: 'TV Shows'),// TVshowsScreen(title: 'TV Shows'), // TODO: Implement TVshowsScreen
     SearchPage(title: 'Favorites'),// FavoritesScreen(title: 'Favorites'), // TODO: Implement FavoritesScreen
     SearchPage(title: 'Search'),
