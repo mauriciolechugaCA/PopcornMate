@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "782197860146",
+    "project_id": "popcornmate-2ffb8",
+    "storage_bucket": "popcornmate-2ffb8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:782197860146:android:2a1011cdf58e3e0c91192b",
+        "android_client_info": {
+          "package_name": "com.popcornmate.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5eZS2zsI6wAjXOkxUIKXXxe2bxdctmVY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
