@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:popcornmate_app/widgets/carousel.dart';
 import 'package:popcornmate_app/widgets/carousel_large.dart';
 import 'package:popcornmate_app/widgets/section_title.dart';
 import 'package:popcornmate_app/theme/colors.dart';
+import 'package:popcornmate_app/api/api.dart';
+import 'package:popcornmate_app/models/resulttrendingmovies.dart';
+import 'package:popcornmate_app/models/resulttrendingtvshows.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -14,6 +16,33 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final Api api = Api();
+  List<ResultTrendingMovies> _trendingMovies = [];
+  List<ResultTrendingTvShows> _trendingTvShows = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTrendingContent();
+  }
+
+  Future<void> _loadTrendingContent() async {
+    try {
+      final movies = await api.getTrendingMovies();
+      final tvShows = await api.getTrendingTvShows();
+      setState(() {
+        _trendingMovies = movies;
+        _trendingTvShows = tvShows;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,17 +60,23 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         centerTitle: true,
       ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            SectionTitle(title: 'Trending Movies'),
-            SizedBox(height: 300, child: CarouselLarge()),
-            SectionTitle(title: 'Trending TV Shows'),
-            SizedBox(height: 300, child: CarouselLarge()),
-          ],
-        ),
-      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const SectionTitle(title: 'Trending Movies'),
+                  SizedBox(
+                      height: 300,
+                      child: CarouselLarge(items: _trendingMovies)),
+                  const SectionTitle(title: 'Trending TV Shows'),
+                  SizedBox(
+                      height: 300,
+                      child: CarouselLarge(items: _trendingTvShows)),
+                ],
+              ),
+            ),
     );
   }
 }

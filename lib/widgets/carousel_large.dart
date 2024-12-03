@@ -1,49 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:popcornmate_app/theme/colors.dart';
-import 'package:popcornmate_app/widgets/carousel.dart';
+import 'package:popcornmate_app/models/resulttrendingmovies.dart';
 
-// This class is used to create a large carousel
-class CarouselLarge extends Carousel {
-  const CarouselLarge({super.key});
+class CarouselLarge extends StatelessWidget {
+  final List<dynamic> items;
+
+  const CarouselLarge({super.key, required this.items});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 300, // Set a larger height for the large carousel
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return Container(
-            width: 200, // Set a larger width for each item
-            margin: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: AppColors.accent,
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.transparent, // This is the background color
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return Container(
+          width: 200,
+          margin: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: AppColors.accent,
+              width: 2,
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end, // Aligns content to bottom
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.transparent,
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Stack(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    'Movie ${index + 1}',
-                    style: const TextStyle(
-                      color: AppColors.highlight,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                if (item.posterPath.isNotEmpty)
+                  Positioned.fill(
+                    child: Image.network(
+                      'https://image.tmdb.org/t/p/w500${item.posterPath}',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.7),
+                          Colors.black.withOpacity(0.9),
+                        ],
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      item is ResultTrendingMovies ? item.title : item.name,
+                      style: const TextStyle(
+                        color: AppColors.highlight,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
               ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
