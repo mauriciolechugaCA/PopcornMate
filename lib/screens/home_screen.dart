@@ -18,8 +18,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final Api api = Api();
   List<ResultTrendingMovies> _trendingMovies = [];
-  List<ResultTrendingTvShows> _trendingTvShows = [];
+  List<ResultTrendingTvShows> _trendingTvShows = []; 
   bool _isLoading = true;
+  bool _mounted = true; // Add mounted tracker to avoid calling setState on unmounted widget
 
   @override
   void initState() {
@@ -27,19 +28,29 @@ class _MyHomePageState extends State<MyHomePage> {
     _loadTrendingContent();
   }
 
+  @override
+  void dispose() {
+    _mounted = false; 
+    super.dispose();
+  }
+
   Future<void> _loadTrendingContent() async {
     try {
       final movies = await api.getTrendingMovies();
       final tvShows = await api.getTrendingTvShows();
-      setState(() {
-        _trendingMovies = movies;
-        _trendingTvShows = tvShows;
-        _isLoading = false;
-      });
+      if (_mounted) { 
+        setState(() {
+          _trendingMovies = movies;
+          _trendingTvShows = tvShows;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
+      if (_mounted) { 
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 

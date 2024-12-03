@@ -22,10 +22,11 @@ class CarouselLarge extends StatelessWidget {
               color: AppColors.accent,
               width: 2,
             ),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
             color: Colors.transparent,
           ),
           child: ClipRRect(
+            // ClipRRect is used to clip the image to a rounded rectangle. ChatGPT helped me with this. ^ML
             borderRadius: BorderRadius.circular(8),
             child: Stack(
               children: [

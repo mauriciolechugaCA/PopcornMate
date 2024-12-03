@@ -27,8 +27,8 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const LoginScreen(title: "Login"), // Change title if necessary
-      // home: const MainNavigation(), TODO: Uncomment this line after testing
+      // home: const LoginScreen(title: "Login"), // Change title if necessary
+      home: const MainNavigation(), //TODO: Uncomment this line after testing
     );
   }
 }

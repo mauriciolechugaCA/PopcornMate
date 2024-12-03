@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:popcornmate_app/screens/favorites_screen.dart';
 import 'package:popcornmate_app/screens/home_screen.dart';
 import 'package:popcornmate_app/screens/search_screen.dart';
 import 'package:popcornmate_app/theme/colors.dart';
@@ -19,7 +20,7 @@ class _MainNavigationState extends State<MainNavigation> {
     MyHomePage(title: 'Home'),
     SearchPage(title: 'Movies'), // MoviesScreen(title: 'Movies'),  // TODO: Implement MoviesScreen
     SearchPage(title: 'TV Shows'),// TVshowsScreen(title: 'TV Shows'), // TODO: Implement TVshowsScreen
-    SearchPage(title: 'Favorites'),// FavoritesScreen(title: 'Favorites'), // TODO: Implement FavoritesScreen
+    FavoritesScreen(title: 'Favorites'),
     SearchPage(title: 'Search'),
   ];
 
