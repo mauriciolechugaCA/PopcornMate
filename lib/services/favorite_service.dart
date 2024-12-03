@@ -53,7 +53,11 @@ class FavoritesService {
 }
 // Database schema:
 
-// ```
+// users (collection)
+// └── {userId} (document)
+//     ├── username: string
+//     └── password: string
+
 // favorite_movies (collection)
 // └── {favoriteMovieId} (document)
 //     ├── userId: string

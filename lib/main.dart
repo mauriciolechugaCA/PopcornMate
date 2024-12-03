@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:popcornmate_app/navigation/main_navigation.dart';
+import 'package:popcornmate_app/screens/login_screen.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -26,7 +27,8 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const MainNavigation(),
+      home: const LoginScreen(title: "Login"), // Change title if necessary
+      // home: const MainNavigation(), TODO: Uncomment this line after testing
     );
   }
 }
