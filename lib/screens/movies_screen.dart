@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-// import 'package:http/http.dart' as http;
-// import 'dart:convert';
+import 'package:popcornmate_app/api/api.dart';
+import 'package:popcornmate_app/models/resulttrendingmovies.dart';
 import 'package:popcornmate_app/widgets/carousel_movies.dart';
 import 'package:popcornmate_app/widgets/carousel_large_movies.dart';
 import 'package:popcornmate_app/widgets/section_title.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 import 'package:popcornmate_app/screens/movie_details_screen.dart';
-import 'package:popcornmate_app/models/movie.dart';
 
+// Defines the movies screen as a stateful widget (dynamic state management).
 class MoviesScreen extends StatefulWidget {
   const MoviesScreen({super.key});
 
@@ -16,85 +16,38 @@ class MoviesScreen extends StatefulWidget {
 }
 
 class _MoviesScreenState extends State<MoviesScreen> {
-  List<Movie> _movies = [];
+  // List to store the movies retrieved from the API.
+  List<ResultTrendingMovies> _movies = [];
+  // Flag to indicate if data is still loading.
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    // Calls the method to fetch movies as soon as the widget initializes.
     _fetchMovies();
   }
 
-  // Parte temporária para alimentar os dados fictícios
-  void _fetchMovies() {
-    _movies = [
-      Movie(
-        id: 1,
-        title: 'Popular Movie 1',
-        imageUrl: 'https://via.placeholder.com/150', // URL de imagem fixa para teste
-        releaseDate: '2024-12-01',
-        overview: 'Overview: This is an overview of Popular Movie 1.',
-        popularity: 85.0,
-        duration: '120 min', 
-      ),
-      Movie(
-        id: 2,
-        title: 'Popular Movie 2',
-        imageUrl: 'https://via.placeholder.com/150', // URL de imagem fixa para teste
-        releaseDate: '2023-11-11',
-        overview: 'Overview: This is an overview of Popular Movie 2.',
-        popularity: 78.5,
-        duration: '110 min',
-      ),
-      Movie(
-        id: 3,
-        title: 'Popular Movie 3',
-        imageUrl: 'https://via.placeholder.com/150', // URL de imagem fixa para teste
-        releaseDate: '2022-10-21',
-        overview: 'Overview: This is an overview of Popular Movie 3.',
-        popularity: 70.0,
-        duration: '130 min',
-      ),
-      Movie(
-        id: 4,
-        title: 'Popular Movie 4',
-        imageUrl: 'https://via.placeholder.com/150', // URL de imagem fixa para teste
-        releaseDate: '2021-09-01',
-        overview: 'Overview: This is an overview of Popular Movie 4.',
-        popularity: 65.0,
-        duration: '100 min',
-      ),
-      Movie(
-        id: 5,
-        title: 'Popular Movie 5',
-        imageUrl: 'https://via.placeholder.com/150', // URL de imagem fixa para teste
-        releaseDate: '2020-08-31',
-        overview: 'Overview: This is an overview of Popular Movie 5.',
-        popularity: 60.0,
-        duration: '90 min',
-      ),
-    ];
-  }
-
-  /*
-  // Código comentado para integrar com a API
+  // Method to fetch movies from the API.
   Future<void> _fetchMovies() async {
-    final response = await http.get(Uri.parse(
-        'https://api.themoviedb.org/3/movie/popular?api_key=YOUR_API_KEY&language=en-US&page=1'));
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final List results = data['results'];
-
+    try {
+      Api api = Api(); // Creates an instance of the API class.
+      List<ResultTrendingMovies> trendingMovies = await api.getTrendingMovies(); // Fetches the movies.
       setState(() {
-        _movies = results.map((json) => Movie.fromJson(json)).toList();
+        _movies = trendingMovies; // Updates the movies list.
+        _isLoading = false; // Indicates loading is complete.
       });
-    } else {
-      throw Exception('Failed to load movies');
+    } catch (e) {
+      // Handles errors and stops loading even on failure.
+      print('Error fetching movies: $e');
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
-  */
 
-  void _navigateToMovieDetails(BuildContext context, Movie movie) {
+  // Navigates to the movie details screen when a movie is tapped
+  void _navigateToMovieDetails(BuildContext context, ResultTrendingMovies movie) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -107,9 +60,9 @@ class _MoviesScreenState extends State<MoviesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.text,
-        elevation: 0,
+        backgroundColor: AppColors.primary, // Background color
+        foregroundColor: AppColors.text, // Text and icon color
+        elevation: 0, // Removes shadow from the AppBar
         title: const Text(
           'Movies',
           style: TextStyle(
@@ -118,47 +71,53 @@ class _MoviesScreenState extends State<MoviesScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        centerTitle: true,
+        centerTitle: true, // Centers the title.
       ),
-      body: _movies.isEmpty
+      body: _isLoading
+          // Shows a loading indicator while data is not ready
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SectionTitle(title: 'Popular'),
-                  SizedBox(
-                    height: 300,
-                    child: CarouselLargeMovies(
-                      movies: _movies,
-                      onTap: (context, index) {
-                        _navigateToMovieDetails(context, _movies[index % _movies.length]);
-                      },
+          // Displays a message if no movies are available.
+          : _movies.isEmpty
+              ? const Center(child: Text('No movies available'))
+              // Displays movies in a list with organized sections
+              : ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    // Section for popular movies
+                    const SectionTitle(title: 'Popular'),
+                    SizedBox(
+                      height: 300,
+                      child: CarouselLargeMovies(
+                        movies: _movies,
+                        onTap: (context, index) {
+                          _navigateToMovieDetails(context, _movies[index % _movies.length]);
+                        },
+                      ),
                     ),
-                  ),
-                  const SectionTitle(title: 'Top-rated'),
-                  SizedBox(
-                    height: 250,
-                    child: CarouselMovies(
-                      movies: _movies,
-                      onTap: (context, index) {
-                        _navigateToMovieDetails(context, _movies[index % _movies.length]);
-                      },
+                    // Section for top-rated movies
+                    const SectionTitle(title: 'Top-rated'),
+                    SizedBox(
+                      height: 250,
+                      child: CarouselMovies(
+                        movies: _movies,
+                        onTap: (context, index) {
+                          _navigateToMovieDetails(context, _movies[index % _movies.length]);
+                        },
+                      ),
                     ),
-                  ),
-                  const SectionTitle(title: 'New Releases'),
-                  SizedBox(
-                    height: 250,
-                    child: CarouselMovies(
-                      movies: _movies,
-                      onTap: (context, index) {
-                        _navigateToMovieDetails(context, _movies[index % _movies.length]);
-                      },
+                    // Section for new releases
+                    const SectionTitle(title: 'New Releases'),
+                    SizedBox(
+                      height: 250,
+                      child: CarouselMovies(
+                        movies: _movies,
+                        onTap: (context, index) {
+                          _navigateToMovieDetails(context, _movies[index % _movies.length]);
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
+                  ],
+                ),
     );
   }
 }
