@@ -1,5 +1,6 @@
 import 'package:popcornmate_app/models/resulttrendingmovies.dart';
 import 'package:popcornmate_app/models/resulttrendingtvshows.dart';
+import 'package:popcornmate_app/models/tvdetails.dart';
 import 'dart:convert';
 import 'apidetails.dart';
 import "package:http/http.dart" as http;
@@ -14,7 +15,8 @@ class Api
   //Base URL to get the Trendng TV Shows list from the API
   static const trendingTvShowUrl = 'https://api.themoviedb.org/3/trending/tv/week?api_key=${ApiDetails.apiKey}';
 
-
+  //Base URL to get the TV Show details from the API
+  static const tvDetailsUrl = 'https://api.themoviedb.org/3/tv/';
 
 
 
@@ -65,11 +67,31 @@ class Api
     } 
     else 
     {
-      throw Exception("Failed to load trending movies");
+      throw Exception("Failed to load trending tv shows");
     }
   }
   
+  //I need to receive the series id to get the details
+  Future<TvDetails> getTvDetails(int id) async 
+  {
+    //Concatenating the URL with the id
+    Response responseFromAPI = await http.get(Uri.parse(tvDetailsUrl + id.toString() + '?api_key=${ApiDetails.apiKey}'));
 
+    //Checking if the response is OK. 200 is OK
+    if (responseFromAPI.statusCode == 200) 
+    {
+      
+      //Decoding the Json
+      final data = jsonDecode(responseFromAPI.body);
+
+      //Get the list from the Jspn
+      return TvDetails.fromJson(data);
+    } 
+    else 
+    {
+      throw Exception("Failed to load tv details");
+    }
+  }
 
 
 }
