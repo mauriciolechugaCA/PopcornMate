@@ -1,81 +1,65 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+class FavoritesService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // User Registration
-  Future<User?> registerUser({
-    required String username, 
-    required String email, 
-    required String password
+  // Add Movie to Favorites
+  Future<void> addMovieToFavorites({
+    required String userId, 
+    required String movieId,
   }) async {
-    try {
-      // Create user with Firebase Authentication
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
-        email: email, 
-        password: password
-      );
-      
-      User? user = result.user;
-      
-      if (user != null) {
-        // Store additional user info in Firestore
-        await _firestore.collection('users').doc(user.uid).set({
-          'username': username,
-          'email': email,
-        });
-        
-        return user;
-      }
-      
-      return null;
-    } catch (e) {
-      print('Registration error: $e');
-      return null;
-    }
+    await _firestore.collection('favorite_movies').add({
+      'userId': userId,
+      'movieId': movieId,
+    });
   }
 
-  // User Login
-  Future<User?> loginUser({
-    required String email, 
-    required String password
+  // Add TV Show to Favorites
+  Future<void> addTVShowToFavorites({
+    required String userId, 
+    required String tvShowId,
   }) async {
-    try {
-      UserCredential result = await _auth.signInWithEmailAndPassword(
-        email: email, 
-        password: password
-      );
-      return result.user;
-    } catch (e) {
-      print('Login error: $e');
-      return null;
-    }
+    await _firestore.collection('favorite_tvshows').add({
+      'userId': userId,
+      'tvShowId': tvShowId,
+    });
   }
 
-  // Add to Favorites
-  Future<void> addToFavorites({
-    required String userId,
-    required String itemId,
-    required String itemType
-  }) async {
-    try {
-      await _firestore.collection('favorites').add({
-        'userId': userId,
-        'itemId': itemId,
-        'itemType': itemType,
-      });
-    } catch (e) {
-      print('Error adding to favorites: $e');
-    }
-  }
-
-  // Get User's Favorites
-  Stream<QuerySnapshot> getUserFavorites(String userId) {
+  // Get User's Favorite Movies
+  Stream<QuerySnapshot> getUserFavoriteMovies(String userId) {
     return _firestore
-      .collection('favorites')
+      .collection('favorite_movies')
       .where('userId', isEqualTo: userId)
       .snapshots();
   }
+
+  // Get User's Favorite TV Shows
+  Stream<QuerySnapshot> getUserFavoriteTVShows(String userId) {
+    return _firestore
+      .collection('favorite_tvshows')
+      .where('userId', isEqualTo: userId)
+      .snapshots();
+  }
+
+  // Remove Movie from Favorites
+  Future<void> removeMovieFromFavorites(String favoriteMovieDocId) async {
+    await _firestore.collection('favorite_movies').doc(favoriteMovieDocId).delete();
+  }
+
+  // Remove TV Show from Favorites
+  Future<void> removeTVShowFromFavorites(String favoriteTVShowDocId) async {
+    await _firestore.collection('favorite_tvshows').doc(favoriteTVShowDocId).delete();
+  }
 }
+// Database schema:
+
+// ```
+// favorite_movies (collection)
+// └── {favoriteMovieId} (document)
+//     ├── userId: string
+//     └── movieId: string (from API)
+
+// favorite_tvshows (collection)
+// └── {favoriteTVShowId} (document)
+//     ├── userId: string
+//     └── tvShowId: string (from API)
