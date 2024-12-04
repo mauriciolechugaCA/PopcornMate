@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:popcornmate_app/screens/favorites_screen.dart';
 import 'package:popcornmate_app/screens/home_screen.dart';
 import 'package:popcornmate_app/screens/search_screen.dart';
+import 'package:popcornmate_app/screens/tv_show_screen.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 
 class MainNavigation extends StatefulWidget {
@@ -19,7 +20,7 @@ class _MainNavigationState extends State<MainNavigation> {
   static const List<Widget> _pages = [
     MyHomePage(title: 'Home'),
     SearchPage(title: 'Movies'), // MoviesScreen(title: 'Movies'),  // TODO: Implement MoviesScreen
-    SearchPage(title: 'TV Shows'),// TVshowsScreen(title: 'TV Shows'), // TODO: Implement TVshowsScreen
+    TvShowScreen(title: 'TV Shows'),
     FavoritesScreen(title: 'Favorites'),
     SearchPage(title: 'Search'),
   ];
