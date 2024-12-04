@@ -1,9 +1,11 @@
 import 'package:popcornmate_app/models/moviedetails.dart';
 import 'package:popcornmate_app/models/moviesearch.dart';
+import 'package:popcornmate_app/models/movietoprated.dart';
 import 'package:popcornmate_app/models/resulttrendingmovies.dart';
 import 'package:popcornmate_app/models/resulttrendingtvshows.dart';
 import 'package:popcornmate_app/models/tvdetails.dart';
 import 'package:popcornmate_app/models/tvsearch.dart';
+import 'package:popcornmate_app/models/tvtoprated.dart';
 import 'dart:convert';
 import 'apidetails.dart';
 import "package:http/http.dart" as http;
@@ -29,6 +31,9 @@ class Api
 
   //Base URL to get the TV Show search list from the API
   static const tvSearchUrl = 'https://api.themoviedb.org/3/search/tv?api_key=${ApiDetails.apiKey}&query=';
+
+  //Base URL to get the Top Rated Movies list from the API
+  static const topRatedMoviesUrl = 'https://api.themoviedb.org/3/movie/top_rated?api_key=${ApiDetails.apiKey}';
 
 
 
@@ -179,6 +184,57 @@ class Api
     }
   }
 
+  //Return the Top Rated Movies list
+  Future<List<ResultMovieTopRated>> getTopRatedMovies() async 
+  {
+    //Getting the response from the api/ await http.get
+    Response responseFromAPI = await http.get(Uri.parse(topRatedMoviesUrl));
+
+    //Checking if the response is OK. 200 is OK
+    if (responseFromAPI.statusCode == 200) 
+    {
+      
+      //Decoding the Json
+      final data = jsonDecode(responseFromAPI.body);
+
+      //Get the list from the Jspn
+      final List<dynamic> results = data["results"];
+
+      //Mapping each item from JSON using the ResultTrending constructor
+      //VSCode add some words. Clean line: return results.map((item) => ResultTrending.fromJson(item)).toList();
+      return results.map((item) => ResultMovieTopRated.fromJson(item)).toList();
+    } 
+    else 
+    {
+      throw Exception("Failed to load top rated movies");
+    }
+  }
+
+  //Return the Top Rated TV Shows list
+  Future<List<ResultTvTopRated>> getTopRatedTVShows() async 
+  {
+    //Getting the response from the api/ await http.get
+    Response responseFromAPI = await http.get(Uri.parse(topRatedMoviesUrl));
+
+    //Checking if the response is OK. 200 is OK
+    if (responseFromAPI.statusCode == 200) 
+    {
+      
+      //Decoding the Json
+      final data = jsonDecode(responseFromAPI.body);
+
+      //Get the list from the Jspn
+      final List<dynamic> results = data["results"];
+
+      //Mapping each item from JSON using the ResultTrending constructor
+      //VSCode add some words. Clean line: return results.map((item) => ResultTrending.fromJson(item)).toList();
+      return results.map((item) => ResultTvTopRated.fromJson(item)).toList();
+    } 
+    else 
+    {
+      throw Exception("Failed to load top rated tv shows");
+    }
+  }
 
 
 }
