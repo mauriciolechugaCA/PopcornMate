@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:popcornmate_app/api/apidetails.dart';
 import 'package:popcornmate_app/theme/colors.dart';
-import 'package:popcornmate_app/models/resulttrendingtvshows.dart';
-import 'package:popcornmate_app/models/resulttrendingmovies.dart';
 
 class SearchResultList extends StatelessWidget {
   final List<dynamic> results;
@@ -32,12 +30,24 @@ class SearchResultList extends StatelessWidget {
               //Poster img
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  '${ApiDetails.imgPath}${result.posterPath}',
-                  width: 100,
-                  height: 150,
-                  fit: BoxFit.cover,
-                ),
+                // child: Image.network(
+                //   '${ApiDetails.imgPath}${result.posterPath}',
+                //   width: 100,
+                //   height: 150,
+                //   fit: BoxFit.cover,
+                // ),
+                child: result.posterPath != ""
+                    ? Image.network(
+                        '${ApiDetails.imgPath}${result.posterPath}',
+                        width: 100,
+                        height: 150,
+                        fit: BoxFit.cover,
+                      )
+                    : const Icon(
+                        Icons.no_photography,
+                        size: 100,
+                        color: Colors.grey,
+                      ),
               ),
               const SizedBox(width: 16),
               //Title, Release Date and Rating
@@ -60,8 +70,8 @@ class SearchResultList extends StatelessWidget {
                     //Release Date or First Air Date
                     Text(
                       isMoviesSelected
-                          ? 'Release Date: ${result.releaseDate?.toLocal().toString().split(' ')[0] ?? 'N/A'}'
-                          : 'First Air Date: ${result.firstAirDate?.toLocal().toString().split(' ')[0] ?? 'N/A'}',
+                          ? 'Release Date: ${result.releaseDate ?? 'N/A'}'
+                          : 'First Air Date: ${result.firstAirDate ?? 'N/A'}',
                       style: const TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     const SizedBox(height: 5),
