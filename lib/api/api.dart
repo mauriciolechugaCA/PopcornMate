@@ -1,7 +1,9 @@
 import 'package:popcornmate_app/models/moviedetails.dart';
+import 'package:popcornmate_app/models/moviesearch.dart';
 import 'package:popcornmate_app/models/resulttrendingmovies.dart';
 import 'package:popcornmate_app/models/resulttrendingtvshows.dart';
 import 'package:popcornmate_app/models/tvdetails.dart';
+import 'package:popcornmate_app/models/tvsearch.dart';
 import 'dart:convert';
 import 'apidetails.dart';
 import "package:http/http.dart" as http;
@@ -21,6 +23,12 @@ class Api
 
   //Base URL to get the Movie details from the API
   static const movieDetailsUrl = 'https://api.themoviedb.org/3/movie/';
+
+  //Base URL to get the Movie search list from the API
+  static const movieSearchUrl = 'https://api.themoviedb.org/3/search/movie?api_key=${ApiDetails.apiKey}&query=';
+
+  //Base URL to get the TV Show search list from the API
+  static const tvSearchUrl = 'https://api.themoviedb.org/3/search/tv?api_key=${ApiDetails.apiKey}&query=';
 
 
 
@@ -118,6 +126,59 @@ class Api
       throw Exception("Failed to load movie details");
     }
   }
+
+  //Return the Movie search list. I need to receive the keyword to search
+  Future<List<ResultMovieSearch>> getMovieSearch(String keyword) async 
+  {
+    //Concatenating the URL with the keyword
+    Response responseFromAPI = await http.get(Uri.parse(movieSearchUrl + keyword));
+
+    //Checking if the response is OK. 200 is OK
+    if (responseFromAPI.statusCode == 200) 
+    {
+      
+      //Decoding the Json
+      final data = jsonDecode(responseFromAPI.body);
+
+      //Get the list from the Jspn
+      final List<dynamic> results = data["results"];
+
+      //Mapping each item from JSON using the ResultTrending constructor
+      //VSCode add some words. Clean line: return results.map((item) => ResultTrending.fromJson(item)).toList();
+      return results.map((item) => ResultMovieSearch.fromJson(item)).toList();
+    } 
+    else 
+    {
+      throw Exception("Failed to load movie search");
+    }
+  }
+
+  //Return the TV Show search list. I need to receive the keyword to search
+  Future<List<ResultTVSearch>> getTVSearch(String keyword) async 
+  {
+    //Concatenating the URL with the keyword
+    Response responseFromAPI = await http.get(Uri.parse(tvSearchUrl + keyword));
+
+    //Checking if the response is OK. 200 is OK
+    if (responseFromAPI.statusCode == 200) 
+    {
+      
+      //Decoding the Json
+      final data = jsonDecode(responseFromAPI.body);
+
+      //Get the list from the Jspn
+      final List<dynamic> results = data["results"];
+
+      //Mapping each item from JSON using the ResultTrending constructor
+      //VSCode add some words. Clean line: return results.map((item) => ResultTrending.fromJson(item)).toList();
+      return results.map((item) => ResultTVSearch.fromJson(item)).toList();
+    } 
+    else 
+    {
+      throw Exception("Failed to load tv show search");
+    }
+  }
+
 
 
 }
