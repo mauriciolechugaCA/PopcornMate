@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:popcornmate_app/api/api.dart';
+import 'package:popcornmate_app/api/apidetails.dart';
+import 'package:popcornmate_app/models/resulttrendingmovies.dart';
+import 'package:popcornmate_app/models/resulttrendingtvshows.dart';
 import 'package:popcornmate_app/widgets/section_title.dart';
+import 'package:popcornmate_app/widgets/search_result.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 
-/*
-  TODO: Implement search logic
-  * I think that having everything in separate files is better but I'm not sure of how to do it easily.
-*/
+
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key, required this.title});
@@ -17,6 +19,53 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  final Api api = Api();
+  List<ResultTrendingMovies> _movieResults = [];
+  List<ResultTrendingTvShows> _tvResults = [];
+  bool _isLoading = true;
+  //Control the selected tab
+  bool _isMoviesSelected = true; 
+
+  //Search keyword to search
+  String _searchKeyword = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSearchResults();
+  }
+
+  //Load the search result list
+  Future<void> _loadSearchResults() async {
+    //Start the loading
+    setState(() {
+      _isLoading = true;
+    });
+
+    //Checkig if the user is searching for Movies or TV
+    if (_isMoviesSelected) 
+    {
+      //TODO: Call the API to search for Movies passing the search keyword
+      final movies = await api.getTrendingMovies();
+      setState(() {
+        _movieResults = movies;
+      });
+    } 
+    else 
+    {
+      //TODO: Call the API to search for TV passing the search keyword
+      final tvShows = await api.getTrendingTvShows();
+      setState(() {
+        _tvResults = tvShows;
+      });
+    }
+
+    //Stop the loading
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,24 +83,71 @@ class _SearchPageState extends State<SearchPage> {
         ),
         centerTitle: true,
       ),
-        body: Column(
-          children: [
-            const SectionTitle(title: 'What are you looking for?'),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Actors, movies, genres, directors...',
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  filled: true,
-                  fillColor: Theme.of(context).colorScheme.surface,
+      body: Column(
+        children: [
+          const SectionTitle(title: 'What are you looking for?'),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+            child: TextField(
+              onSubmitted: (value) {
+                setState(() {
+                  _searchKeyword = value;
+                });
+                _loadSearchResults();
+              },
+              decoration: InputDecoration(
+                hintText: 'Actors, movies, genres, directors...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
                 ),
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.surface,
               ),
-            )
-          ],
-        ));
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Radio button to select if Movies or TV Shows
+              // Movies
+              Radio<bool>(
+                value: true,
+                groupValue: _isMoviesSelected,
+                onChanged: (value) {
+                  setState(() {
+                    _isMoviesSelected = value!;
+                  });
+                  // Reload the search results when the radio button is clicked
+                  _loadSearchResults();
+                },
+              ),
+              const Text('Movies'),
+              // TV Shows
+              Radio<bool>(
+                value: false,
+                groupValue: _isMoviesSelected,
+                onChanged: (value) {
+                  setState(() {
+                    _isMoviesSelected = value!;
+                  });
+                  _loadSearchResults();
+                },
+              ),
+              const Text('TV Shows'),
+            ],
+          ),
+          //Loading screen or the result list
+          _isLoading
+              ? const CircularProgressIndicator()
+              : Expanded(
+                  child: SearchResultList(
+                    results: _isMoviesSelected ? _movieResults : _tvResults,
+                    isMoviesSelected: _isMoviesSelected,
+                  ),
+                ),
+        ],
+      ),
+    );
   }
 }
