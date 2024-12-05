@@ -70,6 +70,7 @@ class TvShowScreen extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) => TvShowDetailsScreen(
+                              id: tvShow.id.toString(),
                               title: tvShow.name,
                               description: tvShow.overview,
                               imageUrl: 'https://image.tmdb.org/t/p/w500${tvShow.backdropPath}',
@@ -167,6 +168,7 @@ class TvShowScreen extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) => TvShowDetailsScreen(
+                              id: tvShow.id.toString(),
                               title: tvShow.name,
                               description: tvShow.overview,
                               imageUrl: 'https://image.tmdb.org/t/p/w500${tvShow.backdropPath}',
@@ -264,6 +266,7 @@ class TvShowScreen extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) => TvShowDetailsScreen(
+                              id: tvShow.id.toString(),
                               title: tvShow.name,
                               description: tvShow.overview,
                               imageUrl: 'https://image.tmdb.org/t/p/w500${tvShow.backdropPath}',
