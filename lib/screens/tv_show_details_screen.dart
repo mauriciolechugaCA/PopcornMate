@@ -3,7 +3,7 @@ import 'package:popcornmate_app/services/database_helper.dart';
 
 // This class is used to display the details of a TV show
 class TvShowDetailsScreen extends StatefulWidget {
-  final String id;
+  final String id; // Added for the database handling ^ML
   final String title;
   final String description;
   final String imageUrl;
@@ -12,7 +12,7 @@ class TvShowDetailsScreen extends StatefulWidget {
   // Constructor
   const TvShowDetailsScreen({
     super.key,
-    required this.id,
+    required this.id, 
     required this.title,
     required this.description,
     required this.imageUrl,
