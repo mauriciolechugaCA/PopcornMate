@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:popcornmate_app/services/database_helper.dart';
 
 // This class is used to display the details of a TV show
 class TvShowDetailsScreen extends StatefulWidget {
+  final String id;
   final String title;
   final String description;
   final String imageUrl;
@@ -10,6 +12,7 @@ class TvShowDetailsScreen extends StatefulWidget {
   // Constructor
   const TvShowDetailsScreen({
     super.key,
+    required this.id,
     required this.title,
     required this.description,
     required this.imageUrl,
@@ -22,11 +25,34 @@ class TvShowDetailsScreen extends StatefulWidget {
 }
 
 class _TvShowDetailsScreenState extends State<TvShowDetailsScreen> {
-  // To track whether the thumbs-up button has been pressed
+  final DatabaseHelper _dbHelper = DatabaseHelper();
   bool isLiked = false;
 
-  // Method to toggle the liked status
-  void toggleLike() {
+  @override
+  void initState() {
+    super.initState();
+    _checkIfFavorite();
+  }
+
+  Future<void> _checkIfFavorite() async {
+    final isFav = await _dbHelper.isFavorite(int.parse(widget.id));
+    setState(() {
+      isLiked = isFav;
+    });
+  }
+
+  Future<void> toggleLike() async {
+    if (isLiked) {
+      await _dbHelper.removeFavorite(int.parse(widget.id));
+    } else {
+      await _dbHelper.addFavorite(
+        itemId: int.parse(widget.id),
+        title: widget.title,
+        posterPath: widget.imageUrl,
+        type: 'tv',
+        year: widget.year,
+      );
+    }
     setState(() {
       isLiked = !isLiked;
     });

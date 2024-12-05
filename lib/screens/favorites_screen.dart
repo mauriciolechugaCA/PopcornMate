@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:popcornmate_app/theme/colors.dart';
+import 'package:popcornmate_app/services/database_helper.dart';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key, required this.title});
@@ -12,17 +13,58 @@ class FavoritesScreen extends StatefulWidget {
 
 class _FavoritesScreenState extends State<FavoritesScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final DatabaseHelper _dbHelper = DatabaseHelper();
 
-  // Sample data. Replace with the info from the database
-  final List<Map<String, dynamic>> _favoriteMovies = [
-    {'title': 'Inception', 'year': 2010, 'poster': 'https://example.com/inception.jpg'},
-    {'title': 'The Matrix', 'year': 1999, 'poster': 'https://example.com/matrix.jpg'},
-  ];
+  Future<List<Map<String, dynamic>>> _loadFavorites(String type) async {
+    return await _dbHelper.getFavorites(type);
+  }
 
-  final List<Map<String, dynamic>> _favoriteTVShows = [
-    {'title': 'Breaking Bad', 'year': 2008, 'poster': 'https://example.com/breakingbad.jpg'},
-    {'title': 'Stranger Things', 'year': 2016, 'poster': 'https://example.com/strangerthings.jpg'},
-  ];
+  Widget _buildFavoritesList(String type) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _loadFavorites(type),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final items = snapshot.data!;
+        if (items.isEmpty) {
+          return Center(
+            child: Text('No favorite ${type}s yet'),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final item = items[index];
+            return Card(
+              child: ListTile(
+                leading: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    item['posterPath'],
+                    width: 50,
+                    height: 75,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                title: Text(item['title']),
+                subtitle: Text(item['year']),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () async {
+                    await _dbHelper.removeFavorite(item['itemId']);
+                    setState(() {});
+                  },
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -34,52 +76,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> with SingleTickerProv
   void dispose() {
     _tabController.dispose();
     super.dispose();
-  }
-
-  Widget _buildFavoritesList(List<Map<String, dynamic>> items) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(8.0),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return Card(
-          elevation: 4,
-          margin: const EdgeInsets.symmetric(vertical: 8.0),
-          child: ListTile(
-            leading: ClipRRect(
-              // ClipRRect is used to clip the image to a rounded rectangle. ChatGPT helped me with this. ^ML
-              borderRadius: BorderRadius.circular(8.0),
-              child: Image.network(
-                item['poster'],
-                width: 50,
-                height: 75,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: 50,
-                    height: 75,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.movie, color: Colors.grey),
-                  );
-                },
-              ),
-            ),
-            title: Text(
-              item['title'],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: () {
-                setState(() {
-                  items.removeAt(index);
-                });
-              },
-            ),
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -109,32 +105,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> with SingleTickerProv
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildFavoritesList(_favoriteMovies),
-          _buildFavoritesList(_favoriteTVShows),
+          _buildFavoritesList('movie'),
+          _buildFavoritesList('tv'),
         ],
       ),
-      // Optional: Empty state handling
-      // body: _favoriteMovies.isEmpty && _favoriteTVShows.isEmpty
-      //     ? Center(
-      //         child: Column(
-      //           mainAxisAlignment: MainAxisAlignment.center,
-      //           children: [
-      //             Icon(Icons.favorite_border, size: 100, color: Colors.grey[300]),
-      //             const SizedBox(height: 20),
-      //             const Text(
-      //               'No favorites yet',
-      //               style: TextStyle(fontSize: 18, color: Colors.grey),
-      //             ),
-      //           ],
-      //         ),
-      //       )
-      //     : TabBarView(
-      //         controller: _tabController,
-      //         children: [
-      //           _buildFavoritesList(_favoriteMovies),
-      //           _buildFavoritesList(_favoriteTVShows),
-      //         ],
-      //       ),
     );
   }
 }
