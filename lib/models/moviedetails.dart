@@ -44,7 +44,8 @@ class MovieDetails {
     final String posterPath;
     final List<ProductionCompany> productionCompanies;
     final List<ProductionCountry> productionCountries;
-    final DateTime? releaseDate;
+    // final DateTime? releaseDate;
+    final String releaseDate;
     final int revenue;
     final int runtime;
     final List<SpokenLanguage> spokenLanguages;
@@ -73,7 +74,8 @@ class MovieDetails {
             posterPath: json["poster_path"] ?? "",
             productionCompanies: json["production_companies"] == null ? [] : List<ProductionCompany>.from(json["production_companies"]!.map((x) => ProductionCompany.fromJson(x))),
             productionCountries: json["production_countries"] == null ? [] : List<ProductionCountry>.from(json["production_countries"]!.map((x) => ProductionCountry.fromJson(x))),
-            releaseDate: DateTime.tryParse(json["release_date"] ?? ""),
+            // releaseDate: DateTime.tryParse(json["release_date"] ?? ""),
+            releaseDate: json["release_date"] ?? "",
             revenue: json["revenue"] ?? 0,
             runtime: json["runtime"] ?? 0,
             spokenLanguages: json["spoken_languages"] == null ? [] : List<SpokenLanguage>.from(json["spoken_languages"]!.map((x) => SpokenLanguage.fromJson(x))),

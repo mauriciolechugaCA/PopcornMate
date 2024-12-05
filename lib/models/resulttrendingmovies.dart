@@ -59,7 +59,8 @@ class ResultTrendingMovies
   final String overview;
   final double popularity;
   final String posterPath;
-  final DateTime? releaseDate;
+  // final DateTime? releaseDate;
+  final String releaseDate;
   final String title;
   final bool video;
   final double voteAverage;
@@ -78,7 +79,8 @@ class ResultTrendingMovies
       overview: json["overview"] ?? "",
       popularity: json["popularity"] ?? 0.0,
       posterPath: json["poster_path"] ?? "",
-      releaseDate: DateTime.tryParse(json["release_date"] ?? ""),
+      // releaseDate: DateTime.tryParse(json["release_date"] ?? ""),
+      releaseDate: json["release_date"] ?? "",
       title: json["title"] ?? "",
       video: json["video"] ?? false,
       voteAverage: json["vote_average"] ?? 0.0,
