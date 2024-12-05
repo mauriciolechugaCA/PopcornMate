@@ -6,8 +6,6 @@ import 'package:popcornmate_app/widgets/section_title.dart';
 import 'package:popcornmate_app/widgets/search_result.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 
-
-
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key, required this.title});
 
@@ -17,86 +15,55 @@ class SearchPage extends StatefulWidget {
   State<SearchPage> createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateMixin {
   final Api api = Api();
+  late TabController _tabController;
   List<ResultMovieSearch> _movieResults = [];
   List<ResultTVSearch> _tvResults = [];
-  bool _isLoading = true;
-  //Control the selected tab
-  bool _isMoviesSelected = true; 
-
-  //Search keyword to search
+  bool _isLoading = false;
   String _searchKeyword = '';
+  String? _msgNoResults = '';
 
   @override
   void initState() {
     super.initState();
-    _loadSearchResults();
+    _tabController = TabController(length: 2, vsync: this);
   }
 
-  // //Load the search result list
-  // Future<void> _loadSearchResults() async {
-
-  //   //Dont search if the keyword is empty
-  //   if (_searchKeyword.isEmpty)
-  //   {
-  //     return;
-  //   }
-
-  //   //Start the loading
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-
-  //   //Checkig if the user is searching for Movies or TV
-  //   if (_isMoviesSelected) 
-  //   {
-  //     final movies = await api.getMovieSearch(_searchKeyword);
-  //     setState(() {
-  //       _movieResults = movies;
-  //     });
-  //   } 
-  //   else 
-  //   {
-  //     final tvShows = await api.getTVSearch(_searchKeyword);
-  //     setState(() {
-  //       _tvResults = tvShows;
-  //     });
-  //   }
-
-  //   //Stop the loading
-  //   setState(() {
-  //     _isLoading = false;
-  //   });
-  // }
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   Future<void> _loadSearchResults() async {
-    if (_searchKeyword.isEmpty) return; // Evita busca se a palavra-chave está vazia
+    if (_searchKeyword.isEmpty) return;
 
     setState(() {
       _isLoading = true;
+      _msgNoResults = null;
     });
 
-    try {
-      if (_isMoviesSelected) {
-        final movies = await api.getMovieSearch(_searchKeyword);
-        setState(() {
-          _movieResults = movies;
-        });
+    final isMovieTab = _tabController.index == 0;
+
+    final results = isMovieTab
+        ? await api.getMovieSearch(_searchKeyword)
+        : await api.getTVSearch(_searchKeyword);
+
+    if (!mounted) return; // Verifica se o widget ainda está ativo
+
+    setState(() {
+      if (results != null) {
+        if (isMovieTab) {
+          _movieResults = results.cast<ResultMovieSearch>();
+        } else {
+          _tvResults = results.cast<ResultTVSearch>();
+        }
       } else {
-        final tvShows = await api.getTVSearch(_searchKeyword);
-        setState(() {
-          _tvResults = tvShows;
-        });
+        _msgNoResults = 'No results found.';
       }
-    } catch (e) {
-      // Lidando com possíveis erros da API
-      debugPrint('Erro ao carregar resultados: $e');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+      _isLoading = false;
+    });
   }
 
   @override
@@ -115,12 +82,20 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ),
         centerTitle: true,
+        bottom: TabBar(
+          controller: _tabController,
+          onTap: (_) => _loadSearchResults(),
+          tabs: const [
+            Tab(icon: Icon(Icons.movie), text: 'Movies'),
+            Tab(icon: Icon(Icons.tv), text: 'TV Shows'),
+          ],
+        ),
       ),
       body: Column(
         children: [
-          const SectionTitle(title: 'What are you looking for?'),
+          // const SectionTitle(title: 'What are you looking for?'),
           Padding(
-            padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+            padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
             child: TextField(
               onSubmitted: (value) {
                 setState(() {
@@ -129,7 +104,7 @@ class _SearchPageState extends State<SearchPage> {
                 _loadSearchResults();
               },
               decoration: InputDecoration(
-                hintText: 'Actors, movies, genres, directors...',
+                hintText: 'What are you looking for?',
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -139,46 +114,24 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Radio button to select if Movies or TV Shows
-              // Movies
-              Radio<bool>(
-                value: true,
-                groupValue: _isMoviesSelected,
-                onChanged: (value) {
-                  setState(() {
-                    _isMoviesSelected = value!;
-                  });
-                  // Reload the search results when the radio button is clicked
-                  _loadSearchResults();
-                },
-              ),
-              const Text('Movies'),
-              // TV Shows
-              Radio<bool>(
-                value: false,
-                groupValue: _isMoviesSelected,
-                onChanged: (value) {
-                  setState(() {
-                    _isMoviesSelected = value!;
-                  });
-                  _loadSearchResults();
-                },
-              ),
-              const Text('TV Shows'),
-            ],
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _msgNoResults != null
+                    ? Center(
+                        child: Text(
+                          _msgNoResults!,
+                          style: const TextStyle(color: Colors.red, fontSize: 18),
+                        ),
+                      )
+                    : TabBarView(
+                        controller: _tabController,
+                        children: [
+                          SearchResultList(results: _movieResults, isMoviesSelected: true),
+                          SearchResultList(results: _tvResults, isMoviesSelected: false),
+                        ],
+                      ),
           ),
-          //Loading screen or the result list
-          _isLoading
-              ? const CircularProgressIndicator()
-              : Expanded(
-                  child: SearchResultList(
-                    results: _isMoviesSelected ? _movieResults : _tvResults,
-                    isMoviesSelected: _isMoviesSelected,
-                  ),
-                ),
         ],
       ),
     );

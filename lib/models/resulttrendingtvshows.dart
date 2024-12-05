@@ -56,6 +56,7 @@ class ResultTrendingTvShows {
     final List<int> genreIds;
     final double popularity;
     final DateTime? firstAirDate;
+    // final String firstAirDate;
     final double voteAverage;
     final int voteCount;
     final List<String> originCountry;
@@ -74,6 +75,7 @@ class ResultTrendingTvShows {
             genreIds: json["genre_ids"] == null ? [] : List<int>.from(json["genre_ids"]!.map((x) => x)),
             popularity: json["popularity"] ?? 0.0,
             firstAirDate: DateTime.tryParse(json["first_air_date"] ?? ""),
+            // firstAirDate: json["first_air_date"] ?? "",
             voteAverage: json["vote_average"] ?? 0.0,
             voteCount: json["vote_count"] ?? 0,
             originCountry: json["origin_country"] == null ? [] : List<String>.from(json["origin_country"]!.map((x) => x)),

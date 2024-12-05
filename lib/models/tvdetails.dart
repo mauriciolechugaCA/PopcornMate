@@ -38,13 +38,15 @@ class TvDetails {
     final String backdropPath;
     final List<CreatedBy> createdBy;
     final List<dynamic> episodeRunTime;
-    final DateTime? firstAirDate;
+    // final DateTime? firstAirDate;
+    final String firstAirDate;
     final List<Genre> genres;
     final String homepage;
     final int id;
     final bool inProduction;
     final List<String> languages;
-    final DateTime? lastAirDate;
+    // final DateTime? lastAirDate;
+    final String lastAirDate;
     final TEpisodeToAir? lastEpisodeToAir;
     final String name;
     final TEpisodeToAir? nextEpisodeToAir;
@@ -73,13 +75,15 @@ class TvDetails {
             backdropPath: json["backdrop_path"] ?? "",
             createdBy: json["created_by"] == null ? [] : List<CreatedBy>.from(json["created_by"]!.map((x) => CreatedBy.fromJson(x))),
             episodeRunTime: json["episode_run_time"] == null ? [] : List<dynamic>.from(json["episode_run_time"]!.map((x) => x)),
-            firstAirDate: DateTime.tryParse(json["first_air_date"] ?? ""),
+            // firstAirDate: DateTime.tryParse(json["first_air_date"] ?? ""),
+            firstAirDate: json["first_air_date"] ?? "",
             genres: json["genres"] == null ? [] : List<Genre>.from(json["genres"]!.map((x) => Genre.fromJson(x))),
             homepage: json["homepage"] ?? "",
             id: json["id"] ?? 0,
             inProduction: json["in_production"] ?? false,
             languages: json["languages"] == null ? [] : List<String>.from(json["languages"]!.map((x) => x)),
-            lastAirDate: DateTime.tryParse(json["last_air_date"] ?? ""),
+            // lastAirDate: DateTime.tryParse(json["last_air_date"] ?? ""),
+            lastAirDate: json["last_air_date"] ?? "",
             lastEpisodeToAir: json["last_episode_to_air"] == null ? null : TEpisodeToAir.fromJson(json["last_episode_to_air"]),
             name: json["name"] ?? "",
             nextEpisodeToAir: json["next_episode_to_air"] == null ? null : TEpisodeToAir.fromJson(json["next_episode_to_air"]),
