@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 import 'package:popcornmate_app/services/database_helper.dart';
+import 'package:popcornmate_app/screens/tv_show_details_screen.dart';
+import 'package:popcornmate_app/screens/movie_details_screen.dart';
+import 'package:popcornmate_app/api/api.dart';
+import 'package:popcornmate_app/models/resulttrendingmovies.dart';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key, required this.title});
@@ -17,6 +21,43 @@ class _FavoritesScreenState extends State<FavoritesScreen> with SingleTickerProv
 
   Future<List<Map<String, dynamic>>> _loadFavorites(String type) async {
     return await _dbHelper.getFavorites(type);
+  }
+
+  Future<void> _loadAndNavigateToMovieDetails(int movieId) async {
+    try {
+      final api = Api(); 
+      final movieDetails = await api.getMovieDetails(movieId);
+      
+      if (!mounted) return;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MovieDetailsScreen(
+            movie: ResultTrendingMovies(
+              adult: movieDetails.adult,
+              backdropPath: movieDetails.backdropPath,
+              genreIds: movieDetails.genres.map((g) => g.id).toList(),
+              id: movieDetails.id,
+              originalLanguage: movieDetails.originalLanguage,
+              originalTitle: movieDetails.originalTitle,
+              overview: movieDetails.overview,
+              popularity: movieDetails.popularity,
+              posterPath: movieDetails.posterPath,
+              releaseDate: movieDetails.releaseDate,
+              title: movieDetails.title,
+              video: movieDetails.video,
+              voteAverage: movieDetails.voteAverage,
+              voteCount: movieDetails.voteCount,
+            ),
+          ),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error loading movie details')),
+      );
+    }
   }
 
   Widget _buildFavoritesList(String type) {
@@ -47,6 +88,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> with SingleTickerProv
                     width: 50,
                     height: 75,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.no_photography,
+                      size: 50,
+                      color: Colors.grey,
+                    ),
                   ),
                 ),
                 title: Text(item['title']),
@@ -58,6 +104,25 @@ class _FavoritesScreenState extends State<FavoritesScreen> with SingleTickerProv
                     setState(() {});
                   },
                 ),
+                onTap: () {
+                  if (type == 'tv') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TvShowDetailsScreen(
+                          id: item['itemId'].toString(),
+                          title: item['title'],
+                          description: '', 
+                          imageUrl: item['posterPath'],
+                          year: item['year'],
+                        ),
+                      ),
+                    );
+                  } else {
+                    // For movies, we need to fetch the movie details first
+                    _loadAndNavigateToMovieDetails(item['itemId']);
+                  }
+                },
               ),
             );
           },
