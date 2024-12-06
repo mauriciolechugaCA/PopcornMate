@@ -25,7 +25,7 @@ class SearchResultList extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => TvShowDetailsScreen(
-                  id: result.id,
+                  id: result.id.toString(),
                   title: isMoviesSelected ? result.title : result.name,
                   description: result.overview ?? 'No description available.',
                   imageUrl: '${ApiDetails.imgPath}${result.posterPath}',
