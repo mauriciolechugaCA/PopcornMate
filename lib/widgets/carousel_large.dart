@@ -3,6 +3,7 @@ import 'package:popcornmate_app/theme/colors.dart';
 import 'package:popcornmate_app/models/resulttrendingmovies.dart';
 import 'package:popcornmate_app/api/apidetails.dart';
 import 'package:popcornmate_app/screens/tv_show_details_screen.dart';
+import 'package:popcornmate_app/screens/movie_details_screen.dart';
 
 class CarouselLarge extends StatelessWidget {
   final List<dynamic> items;
@@ -18,10 +19,21 @@ class CarouselLarge extends StatelessWidget {
         final item = items[index];
         return GestureDetector(
           onTap: () {
-            // Check if the item is a TV show
-            if (!item.toString().contains('title')) { // TV shows have 'name' instead of 'title'
+            // Check if the item is a movie (has title property) or TV show (has name property)
+            if (item is ResultTrendingMovies) {
+              // Navigate to movie details
               Navigator.push(
                 context,
+                MaterialPageRoute(
+                  builder: (context) => MovieDetailsScreen(
+                    movie: item,
+                  ),
+                ),
+              );
+            } else {
+              // Navigate to TV show details  
+              Navigator.push(
+                context, 
                 MaterialPageRoute(
                   builder: (context) => TvShowDetailsScreen(
                     id: item.id.toString(),
