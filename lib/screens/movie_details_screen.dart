@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:popcornmate_app/theme/colors.dart';
 import 'package:popcornmate_app/models/resulttrendingmovies.dart';
+import 'package:popcornmate_app/models/moviedetails.dart';
 import 'package:popcornmate_app/services/database_helper.dart';
+import 'package:popcornmate_app/api/api.dart';
+import 'package:popcornmate_app/theme/colors.dart';
 
-// Defines the movie details screen as a stateful widget (dynamic state management).
 class MovieDetailsScreen extends StatefulWidget {
-  final ResultTrendingMovies movie; // The movie to be displayed
+  final ResultTrendingMovies movie; // The selected movie object
 
   const MovieDetailsScreen({super.key, required this.movie});
 
@@ -14,34 +15,55 @@ class MovieDetailsScreen extends StatefulWidget {
 }
 
 class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
-  final DatabaseHelper _dbHelper = DatabaseHelper();
-  bool _isFavorite = false; // Tracks whether the movie is marked as a favorite
+  final DatabaseHelper _dbHelper = DatabaseHelper(); // Database helper instance
+  bool _isFavorite = false; // Tracks if the movie is marked as favorite
+  MovieDetails? _movieDetails; // Detailed information about the movie
+  bool _isLoading = true; // Indicates if data is still loading
 
   @override
   void initState() {
     super.initState();
-    _checkIfFavorite();
+    _checkIfFavorite(); // Check if the movie is already a favorite
+    _fetchMovieDetails(); // Fetch detailed movie information
   }
 
+  /// Checks if the movie is already marked as favorite in the database.
   Future<void> _checkIfFavorite() async {
-    // Verify if the movie is a favorite
-    final isFav = await _dbHelper.isFavorite(widget.movie.id);
+    final isFav = await _dbHelper.isFavorite(widget.movie.id); // Check favorite status
     setState(() {
-      _isFavorite = isFav;
+      _isFavorite = isFav; // Update the favorite status
     });
   }
 
+  /// Fetches detailed information about the movie from the API.
+  Future<void> _fetchMovieDetails() async {
+    try {
+      Api api = Api(); // Instantiate the API helper class
+      MovieDetails details = await api.getMovieDetails(widget.movie.id); // Fetch movie details
+      setState(() {
+        _movieDetails = details; // Update the movie details
+        _isLoading = false; // Set loading flag to false
+      });
+    } catch (e) {
+      print('Error fetching movie details: $e'); // Log the error
+      setState(() {
+        _isLoading = false; // Set loading flag to false even if there's an error
+      });
+    }
+  }
+
+  /// Toggles the favorite status of the movie.
   Future<void> _toggleFavorite() async {
     if (_isFavorite) {
-      // If it's a favorite, remove it from the database
+      // If the movie is already a favorite, remove it from the database
       await _dbHelper.removeFavorite(widget.movie.id);
     } else {
-      // If it's not a favorite, add it to the database
+      // If the movie is not a favorite, add it to the database
       String posterUrl = widget.movie.posterPath.isNotEmpty
           ? 'https://image.tmdb.org/t/p/w500${widget.movie.posterPath}'
           : '';
 
-      // If the realease date is not empty, extract the year
+      // Extract the release year from the release date
       String releaseYear = 'Unknown';
       if (widget.movie.releaseDate.isNotEmpty) {
         final parsedDate = DateTime.tryParse(widget.movie.releaseDate);
@@ -50,22 +72,22 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
         }
       }
 
-      // Adds the movie to the favorites database
+      // Add the movie to favorites in the database
       await _dbHelper.addFavorite(
         itemId: widget.movie.id,
         title: widget.movie.title,
         posterPath: posterUrl,
-        type: 'movie',
+        type: 'movie', // Specify the type as 'movie'
         year: releaseYear,
       );
     }
 
-    // Updates the favorite status
+    // Update the favorite status 
     setState(() {
       _isFavorite = !_isFavorite;
     });
 
-    // Shows a snackbar message to confirm the action
+    // Show a snackbar message confirming the action
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -78,123 +100,187 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     );
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
-    // Movie poster image URL
-    String imageUrl = widget.movie.posterPath.isNotEmpty
-        ? 'https://image.tmdb.org/t/p/w500${widget.movie.posterPath}'
-        : 'https://via.placeholder.com/150';
+    // Display a loading indicator while fetching movie details
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.primary, // Set AppBar background color
+          elevation: 0, // Remove shadow from AppBar
+          title: Text(
+            widget.movie.title, // Display movie title in AppBar
+            style: const TextStyle(
+              color: AppColors.accent,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          centerTitle: true, // Center the title
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.text),
+            onPressed: () => Navigator.of(context).pop(), // Navigate back on tap
+          ),
+        ),
+        body: const Center(child: CircularProgressIndicator()), // Show loader
+      );
+    }
 
-    // Formats the movie's release date
-    String releaseDate = widget.movie.releaseDate != null
-        ? '${DateTime.parse(widget.movie.releaseDate!).year}'
-        : 'Unknown';
+    // Display an error message if movie details failed to load
+    if (_movieDetails == null) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.primary,
+          elevation: 0,
+          title: Text(
+            widget.movie.title,
+            style: const TextStyle(
+              color: AppColors.accent,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.text),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ),
+        body: const Center(
+          child: Text(
+            'Error loading movie details.',
+            style: TextStyle(color: AppColors.text),
+          ),
+        ),
+      );
+    }
 
+    // Display the movie details once fetched successfully
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        elevation: 0,
+        backgroundColor: AppColors.primary, // Set AppBar background color
+        elevation: 0, // Remove shadow from AppBar
         title: Text(
-          widget.movie.title,
+          widget.movie.title, // Display movie title in AppBar
           style: const TextStyle(
             color: AppColors.accent,
             fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
         ),
-        centerTitle: true,
+        centerTitle: true, // Center the title
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.text),
-          onPressed: () {
-            Navigator.of(context).pop(); // Returns to the previous screen
-          },
+          onPressed: () => Navigator.of(context).pop(), // Navigate back on tap
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView( // To prevent overflow
+        padding: const EdgeInsets.all(16.0), // Padding around the content
+        child: SingleChildScrollView( // Allows scrolling if content overflows
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start, // Align content to the start
             children: [
-              // Displays the movie's poster or a placeholder
-              imageUrl.isNotEmpty
-                  ? Image.network(imageUrl)
+              // Movie Poster
+              _movieDetails!.posterPath.isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8), // Add rounded corners
+                      child: AspectRatio(
+                        aspectRatio: 2 / 3, // Define the image's aspect ratio (adjust as needed)
+                        child: Image.network(
+                          'https://image.tmdb.org/t/p/w500${_movieDetails!.posterPath}', // Full URL of the poster image
+                          fit: BoxFit.cover, // Cover the available space while maintaining aspect ratio
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.broken_image, size: 200, color: Colors.grey), // Show broken image icon on error
+                        ),
+                      ),
+                    )
                   : Container(
-                      height: 200,
-                      color: Colors.grey,
+                      height: 300, // Adjusted height for the placeholder
+                      decoration: BoxDecoration(
+                        color: Colors.grey, // Placeholder background color
+                        borderRadius: BorderRadius.circular(8), // Rounded corners
+                      ),
                       child: const Center(
                         child: Text(
-                          'No Image Available',
+                          'Image Not Available', // Placeholder text
                           style: TextStyle(color: AppColors.text),
                         ),
                       ),
                     ),
-              const SizedBox(height: 16),
-              // Movie title
+              const SizedBox(height: 16), // Spacing between the image and title
+
+              // Movie Title
               Text(
-                widget.movie.title,
+                _movieDetails!.title, // Display movie title
                 style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.text,
+                  fontSize: 32, // Font size
+                  fontWeight: FontWeight.bold, // Bold text
+                  color: AppColors.text, // Text color
                 ),
               ),
-              const SizedBox(height: 16),
-              // Release date
+              const SizedBox(height: 16), // Spacing between title and release year
+
+              // Release Year
               Text(
-                'Release year: $releaseDate',
+                'Release year: ${_movieDetails!.releaseDate.isNotEmpty ? DateTime.parse(_movieDetails!.releaseDate).year : 'Unknown'}', // Display release year
                 style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.text,
+                  fontSize: 16, // Font size
+                  fontWeight: FontWeight.w600, // Semi-bold text
+                  color: AppColors.text, // Text color
                 ),
               ),
-              const SizedBox(height: 8),
-              // Movie popularity
+              const SizedBox(height: 8), // Spacing between release year and popularity
+
+              // Popularity
               Text(
-                'Popularity: ${widget.movie.popularity.toStringAsFixed(1)}',
+                'Popularity: ${_movieDetails!.popularity.toStringAsFixed(1)}', // Display popularity
                 style: const TextStyle(
-                  fontSize: 16,
-                  color: AppColors.text,
+                  fontSize: 16, // Font size
+                  color: AppColors.text, // Text color
                 ),
               ),
-              const SizedBox(height: 16),
-              // Movie overview
+              const SizedBox(height: 16), // Spacing between popularity and overview
+
+              // Movie Overview
               Text(
-                widget.movie.overview.isNotEmpty 
-                    ? widget.movie.overview 
-                    : 'No overview available.',
+                _movieDetails!.overview.isNotEmpty
+                    ? _movieDetails!.overview // Display overview if available
+                    : 'No overview available.', // Default message if overview is missing
                 style: const TextStyle(
-                  fontSize: 16,
-                  color: AppColors.text,
+                  fontSize: 16, // Font size
+                  color: AppColors.text, // Text color
                 ),
               ),
-              const SizedBox(height: 32),
-              // Button to toggle favorite status
+              const SizedBox(height: 32), // Spacing before the favorite button
+
+              // Favorite Button
               Center(
                 child: GestureDetector(
-                  onTap: _toggleFavorite,
+                  onTap: _toggleFavorite, // Handle tap events
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16.0, horizontal: 24.0), // Padding inside the button
                     decoration: BoxDecoration(
-                      color: Colors.yellow,
-                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.yellow, // Button background color
+                      borderRadius: BorderRadius.circular(12), // Rounded corners
                     ),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisSize: MainAxisSize.min, // Wrap content vertically
                       children: [
                         Icon(
-                          _isFavorite ? Icons.thumb_up : Icons.thumb_up_outlined,
-                          color: Colors.black,
-                          size: 40,
+                          _isFavorite
+                              ? Icons.thumb_up // Filled icon if favorite
+                              : Icons.thumb_up_outlined, // Outlined icon if not favorite
+                          color: Colors.black, // Icon color
+                          size: 40, // Icon size
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 8), // Spacing between icon and text
                         const Text(
-                          'Favorite',
+                          'Favorite', // Button text
                           style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            color: Colors.black, // Text color
+                            fontSize: 18, // Font size
+                            fontWeight: FontWeight.bold, // Bold text
                           ),
                         ),
                       ],
@@ -202,7 +288,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 32), // Spacing at the bottom
             ],
           ),
         ),
