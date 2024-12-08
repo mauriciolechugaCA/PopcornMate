@@ -4,6 +4,7 @@ import 'package:popcornmate_app/theme/colors.dart';
 //TV Details Screen
 import 'package:popcornmate_app/screens/tv_show_details_screen.dart';
 
+// Made by Fernando Souza
 
 class SearchResultList extends StatelessWidget {
   final List<dynamic> results;

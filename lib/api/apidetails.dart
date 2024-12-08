@@ -2,6 +2,7 @@
 //Class with all the details of the API
 //Api Key, image path, etc.
 
+// Made by Fernando Souza
 
 class ApiDetails 
 {

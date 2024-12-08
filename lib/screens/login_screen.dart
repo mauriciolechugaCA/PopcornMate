@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 import 'package:popcornmate_app/navigation/main_navigation.dart';
 
+// Made by Mauricio Lechuga
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key, required this.title});
 
@@ -30,10 +32,9 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  /// Function to submit the form
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      // TODO: Implement login logic with Firebase Auth and Firestore
-      // For now we will just navigate to the main navigation screen
       
       // Navigate to main navigation
       Navigator.of(context).pushReplacement(

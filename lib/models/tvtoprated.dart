@@ -1,3 +1,5 @@
+// Made by Fernando Souza
+
 class TvTopRated {
     TvTopRated({
         required this.page,

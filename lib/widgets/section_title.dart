@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 
+// Made by Mauricio Lechuga
+
 // This class is used to create sections titles
 class SectionTitle extends StatelessWidget {
   final String title;

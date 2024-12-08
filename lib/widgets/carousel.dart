@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 
+// Made by Mauricio Lechuga
+
 // This class is used to create a carousel
 class Carousel extends StatelessWidget {
   const Carousel({super.key});

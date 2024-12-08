@@ -6,6 +6,8 @@ import 'package:popcornmate_app/screens/movie_details_screen.dart';
 import 'package:popcornmate_app/api/api.dart';
 import 'package:popcornmate_app/models/resulttrendingmovies.dart';
 
+// Made by Mauricio Lechuga
+
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key, required this.title});
 
@@ -23,6 +25,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> with SingleTickerProv
     return await _dbHelper.getFavorites(type);
   }
 
+  /// Function to load movie details and navigate to movie details screen
   Future<void> _loadAndNavigateToMovieDetails(int movieId) async {
     try {
       final api = Api(); 
@@ -60,6 +63,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> with SingleTickerProv
     }
   }
 
+  /// Function to build the favorites list
   Widget _buildFavoritesList(String type) {
     return FutureBuilder<List<Map<String, dynamic>>>(
       future: _loadFavorites(type),
@@ -119,7 +123,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> with SingleTickerProv
                       ),
                     );
                   } else {
-                    // For movies, we need to fetch the movie details first
                     _loadAndNavigateToMovieDetails(item['itemId']);
                   }
                 },

@@ -5,6 +5,8 @@ import 'package:popcornmate_app/api/apidetails.dart';
 import 'package:popcornmate_app/screens/tv_show_details_screen.dart';
 import 'package:popcornmate_app/screens/movie_details_screen.dart';
 
+// Made by Mauricio Lechuga
+
 class CarouselLarge extends StatelessWidget {
   final List<dynamic> items;
 

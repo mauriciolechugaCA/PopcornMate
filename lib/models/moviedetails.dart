@@ -1,3 +1,5 @@
+// Made by Fernando Souza
+
 class MovieDetails {
     MovieDetails({
         required this.adult,

@@ -1,3 +1,5 @@
+// Made by Fernando Souza
+
 class MovieUpcoming {
     MovieUpcoming({
         required this.dates,

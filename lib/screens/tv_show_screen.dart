@@ -5,6 +5,8 @@ import 'package:popcornmate_app/models/resulttrendingtvshows.dart';
 import 'package:popcornmate_app/screens/tv_show_details_screen.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 
+// Made by Davi Henrique
+
 class TvShowScreen extends StatelessWidget {
   final String title;
 

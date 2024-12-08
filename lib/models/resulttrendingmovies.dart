@@ -1,3 +1,4 @@
+// Made by Fernando Souza
 
 //Auto generated using https://dart-quicktype.netlify.app/
 class MovieApi {

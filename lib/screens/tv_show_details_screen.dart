@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:popcornmate_app/services/database_helper.dart';
 
+// Made by Davi Henrique
+
 // This class is used to display the details of a TV show
 class TvShowDetailsScreen extends StatefulWidget {
   final String id; // Added for the database handling ^ML

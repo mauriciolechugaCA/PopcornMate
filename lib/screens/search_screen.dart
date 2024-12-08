@@ -6,6 +6,8 @@ import 'package:popcornmate_app/widgets/section_title.dart';
 import 'package:popcornmate_app/widgets/search_result.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 
+// Made by Fernando Souza
+
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key, required this.title});
 

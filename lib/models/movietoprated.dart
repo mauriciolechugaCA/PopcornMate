@@ -1,3 +1,5 @@
+// Made by Fernando Souza
+
 class MovieTopRated {
     MovieTopRated({
         required this.page,

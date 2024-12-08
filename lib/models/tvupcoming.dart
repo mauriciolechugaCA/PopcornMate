@@ -1,3 +1,5 @@
+// Made by Fernando Souza
+
 class TvUpcoming {
     TvUpcoming({
         required this.page,

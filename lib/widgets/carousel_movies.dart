@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:popcornmate_app/models/resulttrendingmovies.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 
+// Made by Matheus Santos
+
 class CarouselMovies extends StatelessWidget {
   final List<ResultTrendingMovies> movies; // List of movies to display
   final void Function(BuildContext, ResultTrendingMovies) onTap; // Callback for tap events

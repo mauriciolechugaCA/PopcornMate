@@ -6,6 +6,8 @@ import 'package:popcornmate_app/screens/search_screen.dart';
 import 'package:popcornmate_app/screens/tv_show_screen.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 
+// Made by Mauricio Lechuga
+
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
 
@@ -26,6 +28,7 @@ class _MainNavigationState extends State<MainNavigation> {
     SearchPage(title: 'Search'),
   ];
 
+  /// Function to handle the tap on the navigation bar
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;

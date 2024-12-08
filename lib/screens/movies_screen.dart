@@ -8,6 +8,8 @@ import 'package:popcornmate_app/widgets/section_title.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 import 'package:popcornmate_app/screens/movie_details_screen.dart';
 
+// Made by Matheus Santos
+
 class MoviesScreen extends StatefulWidget {
   final String title; // Title displayed in the AppBar
 

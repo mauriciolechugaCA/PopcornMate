@@ -1,3 +1,5 @@
+// Made by Fernando Souza
+
 class TVSearch {
     TVSearch({
         required this.page,

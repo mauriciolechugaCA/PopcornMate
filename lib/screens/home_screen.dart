@@ -6,6 +6,8 @@ import 'package:popcornmate_app/api/api.dart';
 import 'package:popcornmate_app/models/resulttrendingmovies.dart';
 import 'package:popcornmate_app/models/resulttrendingtvshows.dart';
 
+// Made by Mauricio Lechuga
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -34,6 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
+  /// Function to load trending content
   Future<void> _loadTrendingContent() async {
     try {
       final movies = await api.getTrendingMovies();

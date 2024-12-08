@@ -5,6 +5,8 @@ import 'package:popcornmate_app/services/database_helper.dart';
 import 'package:popcornmate_app/api/api.dart';
 import 'package:popcornmate_app/theme/colors.dart';
 
+// Made by Matheus Santos
+
 class MovieDetailsScreen extends StatefulWidget {
   final ResultTrendingMovies movie; // The selected movie object
 

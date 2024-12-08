@@ -1,3 +1,5 @@
+// Made by Fernando Souza
+
 class TvDetails {
     TvDetails({
         required this.adult,

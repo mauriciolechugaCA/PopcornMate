@@ -13,6 +13,7 @@ import 'apidetails.dart';
 import "package:http/http.dart" as http;
 import 'package:http/http.dart';
 
+// Made by Fernando Souza
 
 class Api 
 {
